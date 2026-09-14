@@ -31,12 +31,50 @@ fun main() {
         check("peekFront is 1 after popping 2", list.peekFront() == 1)
     }
 
-    // Test: popping the only element empties the list
+    // Test: popping the only element via popFront empties the list
     run {
         val list = DoublyLinkedList<Int>()
         list.pushFront(42)
         check("popFront returns 42", list.popFront() == 42)
-        check("list is empty after popping only element", list.isEmpty())
+        check("list is empty after popFront on only element", list.isEmpty())
+        check("peekFront is null after popFront on only element", list.peekFront() == null)
+        check("peekBack is null after popFront on only element", list.peekBack() == null)
+    }
+
+    // Test: pushBack then peek/pop
+    run {
+        val list = DoublyLinkedList<Int>()
+        list.pushBack(1)
+        list.pushBack(2) // list: 1, 2
+        check("peekBack is 2 after pushBack(1), pushBack(2)", list.peekBack() == 2)
+        check("peekFront is 1 after pushBack(1), pushBack(2)", list.peekFront() == 1)
+        check("popBack returns 2", list.popBack() == 2)
+        check("peekBack is 1 after popping 2", list.peekBack() == 1)
+    }
+
+    // Test: popping the only element via popBack empties the list
+    run {
+        val list = DoublyLinkedList<Int>()
+        list.pushBack(42)
+        check("popBack returns 42", list.popBack() == 42)
+        check("list is empty after popBack on only element", list.isEmpty())
+        check("peekFront is null after popBack on only element", list.peekFront() == null)
+        check("peekBack is null after popBack on only element", list.peekBack() == null)
+    }
+
+    // Test: pushFront and pushBack together, popping from both ends
+    run {
+        val list = DoublyLinkedList<Int>()
+        list.pushBack(2)
+        list.pushFront(1)
+        list.pushBack(3) // list: 1, 2, 3
+        check("peekFront is 1 after mixed pushes", list.peekFront() == 1)
+        check("peekBack is 3 after mixed pushes", list.peekBack() == 3)
+        check("popFront returns 1", list.popFront() == 1)
+        check("popBack returns 3", list.popBack() == 3)
+        check("only middle element 2 remains", list.peekFront() == 2 && list.peekBack() == 2)
+        check("popBack returns remaining 2", list.popBack() == 2)
+        check("list is empty after popping all mixed elements", list.isEmpty())
     }
 
     // Test: pop on empty list returns null
