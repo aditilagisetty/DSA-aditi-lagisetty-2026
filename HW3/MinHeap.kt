@@ -19,29 +19,51 @@ class MinHeap<T> : MinPriorityQueue<T> {
 
     override fun addWithPriority(elem: T, priority: Double) {
         // 1. Reject an element that is already in the queue (why would a duplicate break slotOf?)
+        require(elem !in slotOf) {
+            "$elem is already in the queue"
+        }
         // 2. Add elem to the END of items
+        items.add(elem) // adds to bottom of tree
         // 3. Record its priority in `priorities`
-        // 4. Record its slot in `slotOf`  (hint: it's the last index)
-        // 5. siftUp from that slot
-        TODO()
+        priorities[elem] = priority // remember priority
+        // 4. Record its slot in `slotOf` 
+        slotOf[elem] = items.lastIndex // remeber where it is
+        // 5. siftUp from that slot // bubble up to legal spot
+        siftUp(items.lastIndex)
     }
 
     override fun next(): T? {
         // 1. If the heap is empty, return null
+        if (isEmpty()) return null
         // 2. Remember the root (items[0]) -- this is what you'll return
+        val root = items[0]
         // 3. Swap the root with the LAST slot, then remove the last slot from `items`
+        swap(0, items.lastIndex)
+        items.removeAt(items.lastIndex)
         // 4. Remove the old root from `priorities` and `slotOf`
+        priorities.remove(root)
+        slotOf.remove(root)
         // 5. If anything is left, siftDown from slot 0   (what if only 1 element was there?)
+        if (items.isNotEmpty()) siftDown(0)
         // 6. Return the old root
-        TODO()
+        return root
     }
 
     override fun adjustPriority(elem: T, newPriority: Double) {
         // 1. Find elem's slot in `slotOf`. If it isn't there, decide: throw, or ignore?
+        val slot = slotOf[elem] ?: throw IllegalArgumentException("$elem is not in the queue")
         // 2. Save the OLD priority, then store the new one in `priorities`
+        val oldPriority = priorities.getValue(elem)
+        priorities[elem] = newPriority
+
         // 3. New priority lower than old?  -> siftUp from its slot
+        if (newPriority < oldPriority){
+            siftUp(slot)
+        }
         //    Otherwise                     -> siftDown from its slot
-        TODO()
+        else {
+            siftDown(slot)
+        }
     }
 
     // ---- helpers ----
@@ -69,7 +91,7 @@ class MinHeap<T> : MinPriorityQueue<T> {
     private fun siftUp(start: Int) {
         var i = start
         while (i > 0) {
-            val parent = (i - 1) / 2 # can be used for left and right child bc the remainder get thrown away
+            val parent = (i - 1) / 2 // can be used for left and right child bc the remainder get thrown away
             if (priorityAt(i) >= priorityAt(parent)) {
                 break
             }
