@@ -31,6 +31,7 @@ fun <V> dijkstra(graph: Graph<V>, start: V, target: V): List<V>? {
         return null
     }
 
+    // reverse to get shortest path returned
     val path = mutableListOf<V>()
     var currentVertex: V? = target
 
