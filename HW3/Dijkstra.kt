@@ -1,3 +1,10 @@
+/**
+ * Finds the cheapest path from [start] to [target] in [graph] using Dijkstra's algorithm.
+ * Edge costs must be non-negative.
+ *
+ * @return the path as a list of vertices from [start] to [target] inclusive,
+ *   or null if [target] is not reachable from [start].
+ */
 fun <V> dijkstra(graph: Graph<V>, start: V, target: V): List<V>? {
     // best known cost from start to each vertex
     val dist = mutableMapOf<V, Double>()

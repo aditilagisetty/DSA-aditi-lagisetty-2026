@@ -1,6 +1,12 @@
 // heap property MUST hold
 // for every slot i, slotOf[items[i]] == i
 
+/**
+ * A binary min-heap implementation of [MinPriorityQueue].
+ *
+ * `addWithPriority` and `next` run in O(log n); `adjustPriority` also runs in O(log n)
+ * because `slotOf` lets it locate an element's slot without scanning the array.
+ */
 class MinHeap<T> : MinPriorityQueue<T> {
     // Heap order: items[0] has the smallest priority.
     // For slot i: parent = (i - 1) / 2, left child = 2i + 1, right child = 2i + 2
@@ -17,6 +23,7 @@ class MinHeap<T> : MinPriorityQueue<T> {
 
     override fun isEmpty(): Boolean = items.isEmpty()
 
+    /** @throws IllegalArgumentException if [elem] is already in the queue. */
     override fun addWithPriority(elem: T, priority: Double) {
         // 1. Reject an element that is already in the queue (why would a duplicate break slotOf?)
         require(elem !in slotOf) {
@@ -32,6 +39,7 @@ class MinHeap<T> : MinPriorityQueue<T> {
         siftUp(items.lastIndex)
     }
 
+    /** @return the removed lowest-priority element, or null if the queue was empty. */
     override fun next(): T? {
         // 1. If the heap is empty, return null
         if (isEmpty()) return null
@@ -49,6 +57,7 @@ class MinHeap<T> : MinPriorityQueue<T> {
         return root
     }
 
+    /** @throws IllegalArgumentException if [elem] is not currently in the queue. */
     override fun adjustPriority(elem: T, newPriority: Double) {
         // 1. Find elem's slot in `slotOf`. If it isn't there, decide: throw, or ignore?
         val slot = slotOf[elem] ?: throw IllegalArgumentException("$elem is not in the queue")

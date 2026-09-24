@@ -4,8 +4,15 @@ sealed class Node {
     object Sink : Node()
 }
 
-fun main() {
-    val matrix = readMatrix("matrix.txt")
+/**
+ * Project Euler 82: finds the minimal path sum through [matrix], starting anywhere in the
+ * leftmost column and ending anywhere in the rightmost column, moving up, down, or right.
+ * Uses virtual [Node.Source]/[Node.Sink] vertices so a single [dijkstra] call covers every
+ * possible start/end cell.
+ *
+ * @return the minimal path sum, or null if no path exists.
+ */
+fun solve82(matrix: List<List<Int>>): Int? {
     val numRows = matrix.size
     val numCols = matrix[0].size
 
@@ -37,12 +44,16 @@ fun main() {
         graph.addEdge(Node.Cell(row, numCols - 1), Node.Sink, 0.0)
     }
 
-    val path = dijkstra(graph, Node.Source, Node.Sink)
-    if (path == null) {
+    val path = dijkstra(graph, Node.Source, Node.Sink) ?: return null
+    return path.filterIsInstance<Node.Cell>().sumOf { cell -> matrix[cell.row][cell.col] }
+}
+
+fun main() {
+    val matrix = readMatrix("matrix.txt")
+    val total = solve82(matrix)
+    if (total == null) {
         println("no path found")
     } else {
-        val total = path.filterIsInstance<Node.Cell>()
-            .sumOf { cell -> matrix[cell.row][cell.col] }
         println("shortest path sum: $total")
     }
 }

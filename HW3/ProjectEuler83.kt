@@ -1,5 +1,12 @@
-fun main() {
-    val matrix = readMatrix("matrix.txt")
+/**
+ * Project Euler 83: finds the minimal path sum through [matrix] from the top-left to the
+ * bottom-right cell, moving up, down, left, or right (full 4-directional movement). Each
+ * grid cell becomes a graph vertex; edge weight = value of the destination cell; solved
+ * with [dijkstra].
+ *
+ * @return the minimal path sum, or null if no path exists.
+ */
+fun solve83(matrix: List<List<Int>>): Int? {
     val numRows = matrix.size
     val numCols = matrix[0].size
 
@@ -26,11 +33,16 @@ fun main() {
         }
     }
 
-    val path = dijkstra(graph, Pair(0, 0), Pair(numRows - 1, numCols - 1))
-    if (path == null) {
+    val path = dijkstra(graph, Pair(0, 0), Pair(numRows - 1, numCols - 1)) ?: return null
+    return path.sumOf { (r, c) -> matrix[r][c] }
+}
+
+fun main() {
+    val matrix = readMatrix("matrix.txt")
+    val total = solve83(matrix)
+    if (total == null) {
         println("no path found")
     } else {
-        val total = path.sumOf { (r, c) -> matrix[r][c] }
         println("shortest path sum: $total")
     }
 }
