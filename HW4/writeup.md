@@ -8,6 +8,9 @@
 | Merge | Θ(n log n) | Θ(n log n) | Θ(n log n) | O(n) | yes |
 | Quick (random pivot) | O(n log n) | O(n log n) expected | O(n²) | O(log n) expected | no |
 | Heap | Θ(n log n) | Θ(n log n) | Θ(n log n) | O(1) | no |
+| Intro | O(n log n) | O(n log n) | O(n log n) | O(log n) | no |
+| Radix | Θ(n) | Θ(n) | Θ(n) | O(n) | yes |
+| Sample | O(n log n) | O(n log n) expected | O(n log n) | O(n) | no |
 
 ### Insertion Sort
 Insertion sort works like sorting a hand of cards: take the next element and slide it left until it sits next to something smaller. The outer loop always runs n−1 times, so the cost depends on the inner loop. On sorted input the inner loop does 1 comparison and 0 shifts per element, which gives O(n). On reverse sorted input element i has to shift i times, so the total is 1 + 2 + … + (n−1) = n(n−1)/2 = O(n²). On random input each element shifts about halfway, which is still O(n²). It sorts in place, so it uses O(1) extra space. It's stable because the inner loop uses `>` and not `>=`, so equal values never pass each other.
@@ -66,21 +69,81 @@ Runtime: each level of recursion does O(n) work to put every element in a bucket
 
 **Why is sample sort popular for parallel sorting?** Once the elements are in their buckets, every bucket is completely independent. Everything in bucket 0 is smaller than everything in bucket 1, so no merging is needed afterward. That means you can give each bucket to a different CPU core or a different machine and sort them all at the same time. Quick sort only splits into 2 at a time, so at the start there's only 1 or 2 pieces of work to share between cores. Merge sort's halves are independent too, but the final merges still need one big O(n) pass at the end that's hard to split up. Sample sort splits into a lot of pieces right away, which keeps all the cores busy, and it only has to move data between machines once.
 
+## Unit Tests
+
+All 7 sorts are tested in HW4Test.kt. Every sort runs on 11 inputs: empty, one element, two elements, already sorted, reverse sorted, all duplicates, only 3 distinct values, negatives, Int.MIN_VALUE/Int.MAX_VALUE, 20 random values, and 5,000 random values. Each result is compared to Kotlin's built-in.
+
 ## Benchmarking
 
 ### Testing Methodology
+Every sort was timed at n = 10, 100, 1,000, 10,000, 100,000, and 1,000,000. I added 10,000 and 100,000 to the required sizes so it's easier to see how the times grow. Each run is timed with Kotlin's measureTime, and only the sort is timed.
+
+Before timing anything the benchmark does a warm-up, it runs every sort 5 times on 10,000 random values. The JVM starts out running code slowly and then compiles the hot parts into fast machine code while the program runs, so without a warm-up whichever sort ran first would look unfairly slow.
 
 ### List Generation
+I tested two kinds of input:
+- Random: IntArray(n) { Random.nextInt() }, which gives random ints across the whole Int range, so negatives are included and there are basically no duplicates.
+- Already sorted: IntArray(n) { it }, which is 0, 1, 2, …, n−1. This shows how each sort handles its best or worst case.
+
+In each trial a new input is generated and every sort gets a copy of the same input.
 
 ### Repetition
+Small sizes finish in microseconds, so one measurement is mostly noise. Bigger sizes are more stable but take longer. So the number of trials depends on n.
+
+| n | trials |
+|---|--------|
+| 10 – 10,000 | 100 |
+| 100,000 | 5 |
+| 1,000,000 | 3 (insertion sort took ~70 seconds per run here) |
+
+I report the median of the trials instead of the average, because one weird slow run would throw off an average but doesn't affect the median that much.
 
 ### Results
 
-| n | Insertion | Merge | Quick | Heap | Intro | Radix | Sample |
-|---|-----------|-------|-------|------|-------|-------|--------|
-| 10 | | | | | | | |
-| 100 | | | | | | | |
-| 1,000 | | | | | | | |
-| 1,000,000 | | | | | | | |
+**Random input (median ms)**
+
+| n | insertion | merge | quick | heap | intro | radix | sample |
+|---|---|---|---|---|---|---|---|
+| 10 | 0.0005 | 0.0012 | 0.0010 | 0.0014 | 0.0004 | 0.0096 | 0.0004 |
+| 100 | 0.0027 | 0.0079 | 0.0066 | 0.0067 | 0.0047 | 0.0124 | 0.0046 |
+| 1,000 | 0.0706 | 0.0939 | 0.0795 | 0.0904 | 0.0599 | 0.0180 | 0.1117 |
+| 10,000 | 6.1956 | 1.2006 | 1.0373 | 1.1861 | 0.8575 | 0.1217 | 1.9680 |
+| 100,000 | 693.3723 | 17.2881 | 13.6866 | 16.4617 | 12.7617 | 1.2566 | 26.1125 |
+| 1,000,000 | 69842.7416 | 177.7103 | 153.5577 | 203.0313 | 128.9949 | 13.0782 | 315.5013 |
+
+**Already sorted input (median ms)**
+
+| n | insertion | merge | quick | heap | intro | radix | sample |
+|---|---|---|---|---|---|---|---|
+| 10 | 0.0001 | 0.0003 | 0.0005 | 0.0002 | 0.0001 | 0.0045 | 0.0001 |
+| 100 | 0.0002 | 0.0020 | 0.0037 | 0.0018 | 0.0014 | 0.0051 | 0.0013 |
+| 1,000 | 0.0014 | 0.0283 | 0.0468 | 0.0600 | 0.0179 | 0.0242 | 0.0405 |
+| 10,000 | 0.0087 | 0.2308 | 0.3623 | 0.6726 | 0.1500 | 0.1639 | 0.4307 |
+| 100,000 | 0.1318 | 3.9128 | 5.8319 | 7.7334 | 1.9740 | 3.1127 | 8.0872 |
+| 1,000,000 | 1.3328 | 40.0959 | 52.8448 | 100.8255 | 29.4884 | 45.8258 | 77.7199 |
+
+**Does the growth match the Big-O?** When n goes up 10×, an O(n) sort should take about 10× longer, an O(n log n) sort about 12× longer (from 100,000 to 1,000,000 it's 10 × log(1,000,000)/log(100,000) = 10 × 1.2), and an O(n²) sort about 100× longer. Here's the ratio of the 1,000,000 time to the 100,000 time on random input:
+
+| sort | expected | measured |
+|------|----------|----------|
+| insertion | ~100× (n²) | 69842.7 / 693.4 = **100.7×** |
+| merge | ~12× (n log n) | 177.7 / 17.3 = **10.3×** |
+| quick | ~12× (n log n) | 153.6 / 13.7 = **11.2×** |
+| heap | ~12× (n log n) | 203.0 / 16.5 = **12.3×** |
+| intro | ~12× (n log n) | 129.0 / 12.8 = **10.1×** |
+| radix | ~10× (n) | 13.08 / 1.26 = **10.4×** |
+| sample | ~12× (n log n) | 315.5 / 26.1 = **12.1×** |
+
+They all seem to make sense!
 
 ### Conclusions
+- **Insertion sort is O(n²) on random input, and it shows.** At 1,000,000 it took ~70 seconds, while every other sort finished in under a third of a second. But it's actually the fastest at n = 10, because it has no recursion, no extra arrays. And on already sorted input it's the fastest sort at every size, which matches its O(n) best case. Best use: tiny arrays or nearly sorted data, which is exactly why introsort uses it for small ranges.
+- **Radix sort is the fastest on large random input by far**: 13 ms at 1,000,000, about 10× faster than the best comparison sort. That's its Θ(n) beating the rests else's n log n. But at n = 10 it's the slowest, because it always loops over 256 digit values in each of its 4 passes no matter how small the input is. It also didn't speed up on sorted input; it was actually slower. Best use: large arrays of fixed-size integer keys.
+- **Introsort was the fastest comparison sort** at almost every size, for both random and sorted input. It has a O(n log n) worst case thanks to the heap sort fallback. Best use: general purpose sorting.
+- **Quick sort** was the fastest of the four basic n log n sorts on random input. The random pivot did its job on sorted input too: no O(n²) and no stack overflow, and it actually ran faster because sorted data makes the comparisons predictable for the CPU. **Best use:** fast general purpose sorting.
+- **Merge sort** was a bit slower than quick sort on random input, but it's the only n log n sort here that has a guaranteed Θ(n log n) worst case. It costs O(n) extra memory. Best use: when you need stability or a guaranteed worst case.
+- **Heap sort** was the slowest of the basic n log n sorts, especially on sorted input. It jumps all over the array, which is bad for the CPU cache, while merge and quick sort mostly walk through memory in order. Its strengths are O(1) extra memory and a guaranteed Θ(n log n). Best use: when memory is tight and you need a guaranteed worst case
+- **Sample sort was the slowest n log n sort** which was a surprise to me. In my single-threaded it does a binary search over the splitters twice per element per level, copies everything into a buffer, copies each bucket out, and copies it back. Its real advantage is that the buckets are independent and can be sorted at the same time on different cores, which I didn't do. At n = 10 and 100 it matches introsort because it just calls introsort for inputs of 256 or less. Best use: parallel or distributed sorting, not single-threaded.
+- **At n = 10 and 100 the choice basically doesn't matter.** Everything finished in a few microseconds or less, and these times are close to the limit of what the timer can measure reliably. Big-O only really starts to matter around n = 10,000 and up.
+
+**Limitations:** all results come from one machine. At 1,000,000 I only ran 3 trials because insertion sort takes ~70 seconds each time. I only tested random and sorted inputs, not reverse sorted or inputs with lots of duplicates.
