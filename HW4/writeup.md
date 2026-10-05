@@ -38,6 +38,11 @@ If the array is already sorted (smallest to largest), phase 1 still has to flip 
 ## Extra Credit Sorts
 
 ### Introsort
+Introsort combines quick sort, heap sort, and insertion sort, which is roughly what C++'s std::sort does. It runs quick sort, but counts how deep the recursion goes. A good quick sort is about log n levels deep, so if the depth reaches 2 × log₂ n the pivots are going badly and that range switches to heap sort. Ranges of 16 or fewer elements are skipped, and one insertion sort pass at the end finishes them.
+
+**Runtime:** the quick sort part is O(n log n) because the depth is capped at 2 log n and each level does O(n) partitioning work. The final insertion sort pass is O(n) when quick sort stops on a small range, every value in it already belongs in that range, so every element is fewer than 16 slots from its final spot and shifts at most 15 times. That makes the worst case O(n log n). Space is O(log n) for the recursion stack, since the depth is capped.
+
+**Why have the heap sort fallback if the random pivot already makes O(n²) super unlikely?** Because "almost never" isn't "never." A random pivot makes the expected runtime O(n log n), but there's still a tiny chance of picking bad pivots over and over, and a library sort gets called billions of times so eventually someone hits it. The heap sort fallback makes the worst case a guaranteed O(n log n) no matter what the input is or how unlucky the pivots are, and you still get quick sort's speed in the normal case since the fallback almost never actually runs.
 
 ### Radix Sort
 
