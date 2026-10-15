@@ -11,7 +11,7 @@ fun <V> dijkstra(graph: Graph<V>, start: V, target: V): List<V>? {
     // the vertex we came from on the best known path
     val prev = mutableMapOf<V, V>()
     // vertices waiting to be processed, cheapest first
-    val heap = MinHeap<V>()
+    val heap = MinHeap<V>() //priority queue for vertices based on their current best known distance
 
     for (v in graph.getVertices()) {
         dist[v] = if (v == start) 0.0 else Double.POSITIVE_INFINITY
