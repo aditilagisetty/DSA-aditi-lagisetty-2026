@@ -48,5 +48,5 @@ fun lomutoPartition(arr: IntArray, lo: Int, hi: Int): Int {
     }
 
     swap(arr, store, hi)
-    return store
+    return store // return the final index of the pivot
 }

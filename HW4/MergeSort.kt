@@ -28,6 +28,8 @@ private fun merge(arr: IntArray, temp: IntArray, lo: Int, mid: Int, hi: Int) {
     var k = lo      // next slot to fill in temp
 
     while (i < mid && j < hi) {
+        // compare the front elements of the two runs and copy the smaller one to temp
+        // only runs while both halves have elements
         if (arr[i] <= arr[j]) {
             temp[k] = arr[i]
             i++
@@ -38,13 +40,15 @@ private fun merge(arr: IntArray, temp: IntArray, lo: Int, mid: Int, hi: Int) {
         k++
     }
 
-    // while both halves still have elements
-    // take smaller front and advance that halfs pointer
+    // while the left half still has elements
+    // take the front element from the left half and copy it to temp
     while (i < mid) {
         temp[k] = arr[i]
         i++
         k++
     }
+    // while the right half still has elements
+    // take the front element from the right half and copy it to temp
     while (j < hi) {
         temp[k] = arr[j]
         j++

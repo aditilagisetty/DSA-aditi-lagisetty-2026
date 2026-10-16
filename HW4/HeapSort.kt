@@ -4,9 +4,12 @@
  * Time: Θ(n log n) in every case. Space: O(1). Not stable.
  */
 fun heapSort(arr: IntArray) {
-    val n = arr.size
+    val n = arr.size // saves array length
 
     // n / 2 - 1 is the index of the last node that has a child
+    // go backwards bc siftDown only works if the nodes children are valid heaps
+    // bottom up
+    // at end arr[0] is the largest element
     for (i in n / 2 - 1 downTo 0) {
         siftDown(arr, i, n)
     }
@@ -14,7 +17,7 @@ fun heapSort(arr: IntArray) {
     // end is the last slot of the current heap 
     // swapping index 0 with end puts the current 
     // max into its final spot
-    for (end in n - 1 downTo 1) {
+    for (end in n - 1 downTo 1) { // downTo iterates from n-1 to 1 inclusive so dont need end--
         swap(arr, 0, end)
         siftDown(arr, 0, end)
     }
