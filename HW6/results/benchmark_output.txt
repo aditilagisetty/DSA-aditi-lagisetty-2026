@@ -1,0 +1,97 @@
+=== Team matching: 60 students, 12 teams of 5 ===
+
+Demand (how many students ranked each team):
+  AI Tutor           ranked by 53 (first choice of 29)
+  Game Engine        ranked by 39 (first choice of 12)
+  Campus Map         ranked by 19 (first choice of  7)
+  Music Recommender  ranked by 10 (first choice of  2)
+  Budget App         ranked by 14 (first choice of  4)
+  Chess Bot          ranked by 12 (first choice of  2)
+  Weather Dashboard  ranked by  5 (first choice of  1)
+  Recipe Planner     ranked by  8 (first choice of  0)
+  Study Scheduler    ranked by  5 (first choice of  1)
+  Compiler           ranked by  8 (first choice of  1)
+  Fitness Tracker    ranked by  4 (first choice of  0)
+  Library Catalog    ranked by  3 (first choice of  1)
+
+Max flow = 56, so 56 of 60 students get a team they ranked.
+
+Assignments:
+  AI Tutor           (5/5) Student 03, Student 09, Student 39, Student 42, Student 50
+  Game Engine        (5/5) Student 12, Student 17, Student 41, Student 51, Student 52
+  Campus Map         (5/5) Student 04, Student 18, Student 22, Student 23, Student 32
+  Music Recommender  (5/5) Student 28, Student 36, Student 40, Student 49, Student 59
+  Budget App         (5/5) Student 01, Student 14, Student 30, Student 33, Student 46
+  Chess Bot          (5/5) Student 16, Student 20, Student 24, Student 37, Student 53
+  Weather Dashboard  (5/5) Student 02, Student 10, Student 31, Student 45, Student 47
+  Recipe Planner     (5/5) Student 21, Student 27, Student 34, Student 38, Student 48
+  Study Scheduler    (5/5) Student 05, Student 07, Student 08, Student 13, Student 26
+  Compiler           (5/5) Student 11, Student 15, Student 29, Student 43, Student 44
+  Fitness Tracker    (4/5) Student 06, Student 19, Student 25, Student 60
+  Library Catalog    (2/5) Student 35, Student 58
+
+Got 1st choice: 20, 2nd: 16, 3rd: 20, unplaced: 4
+
+Unplaced students:
+  Student 54 ranked Game Engine, AI Tutor, Budget App
+  Student 55 ranked AI Tutor, Campus Map, Game Engine
+  Student 56 ranked Game Engine, Chess Bot, AI Tutor
+  Student 57 ranked Game Engine, Campus Map, AI Tutor
+
+Min cut (what's still reachable from the source after max flow):
+  8 teams: AI Tutor, Game Engine, Campus Map, Music Recommender, Budget App, Chess Bot, Recipe Planner, Compiler
+  44 students, every one of whom ranked ONLY those teams:
+    Student 01, Student 03, Student 04, Student 09, Student 11, Student 12, Student 14, Student 15, Student 16, Student 17, Student 18, Student 20, Student 21, Student 22, Student 23, Student 24, Student 27, Student 28, Student 29, Student 30, Student 32, Student 33, Student 34, Student 36, Student 37, Student 38, Student 39, Student 40, Student 41, Student 42, Student 43, Student 44, Student 46, Student 48, Student 49, Student 50, Student 51, Student 52, Student 53, Student 54, Student 55, Student 56, Student 57, Student 59
+  Those teams have 40 seats in total, so 44 - 40 = 4 students can't all fit, whatever the assignment.
+  Teams outside the cut (nobody in the group above ranked them):
+    Weather Dashboard  5/5 seats used
+    Study Scheduler    5/5 seats used
+    Fitness Tracker    4/5 seats used
+    Library Catalog    2/5 seats used
+
+=== Augmenting paths per algorithm ===
+sparse       V=  100 E=  1000 flow=     392  FF paths=     385  EK paths=   29  (EK bound VE/2 = 50000)
+sparse       V=  200 E=  2000 flow=     367  FF paths=     363  EK paths=   23  (EK bound VE/2 = 200000)
+sparse       V=  400 E=  4000 flow=     555  FF paths=     554  EK paths=   35  (EK bound VE/2 = 800000)
+sparse       V=  800 E=  8000 flow=     405  FF paths=     405  EK paths=   38  (EK bound VE/2 = 3200000)
+sparse       V= 1600 E= 16000 flow=     308  FF paths=     307  EK paths=   17  (EK bound VE/2 = 12800000)
+sparse       V= 3200 E= 32000 flow=     535  FF paths=     535  EK paths=   31  (EK bound VE/2 = 51200000)
+dense        V=   25 E=   312 flow=     686  FF paths=     243  EK paths=   28  (EK bound VE/2 = 3900)
+dense        V=   50 E=  1250 flow=    1134  FF paths=     853  EK paths=   45  (EK bound VE/2 = 31250)
+dense        V=  100 E=  5000 flow=    2484  FF paths=    2415  EK paths=  125  (EK bound VE/2 = 250000)
+dense        V=  150 E= 11250 flow=    3633  FF paths=    3553  EK paths=  165  (EK bound VE/2 = 843750)
+dense        V=  200 E= 20000 flow=    4148  FF paths=    4053  EK paths=  194  (EK bound VE/2 = 2000000)
+dense        V=  300 E= 45000 flow=    7012  FF paths=    6959  EK paths=  324  (EK bound VE/2 = 6750000)
+adversarial  V=   25 E=    82 flow= 1381613  FF paths=      38  EK paths=    4  (EK bound VE/2 = 1025)
+adversarial  V=   50 E=   191 flow= 1767787  FF paths=     216  EK paths=    9  (EK bound VE/2 = 4775)
+adversarial  V=  100 E=   392 flow= 1016766  FF paths=    1513  EK paths=    5  (EK bound VE/2 = 19600)
+adversarial  V=  150 E=   590 flow= 1767787  FF paths=    7781  EK paths=   13  (EK bound VE/2 = 44250)
+adversarial  V=  200 E=   786 flow= 1767787  FF paths=   35097  EK paths=   16  (EK bound VE/2 = 78600)
+adversarial  V=  250 E=   988 flow= 1018080  FF paths=   46157  EK paths=   11  (EK bound VE/2 = 123500)
+wrote results\counts.csv
+
+=== Benchmark ===
+warming up the JIT on every graph...
+
+| family | V | E | Ford-Fulkerson median ms | Edmonds-Karp median ms | FF / EK |
+|---|---|---|---|---|---|
+| sparse | 100 | 1000 | 7.214 | 0.414 | 17.4x |
+| sparse | 200 | 2000 | 18.908 | 1.062 | 17.8x |
+| sparse | 400 | 4000 | 60.353 | 4.473 | 13.5x |
+| sparse | 800 | 8000 | 179.133 | 7.938 | 22.6x |
+| sparse | 1600 | 16000 | 101.129 | 4.805 | 21.0x |
+| sparse | 3200 | 32000 | 444.571 | 21.103 | 21.1x |
+| dense | 25 | 312 | 0.877 | 0.062 | 14.3x |
+| dense | 50 | 1250 | 13.772 | 0.313 | 44.0x |
+| dense | 100 | 5000 | 102.694 | 3.211 | 32.0x |
+| dense | 150 | 11250 | 366.308 | 7.713 | 47.5x |
+| dense | 200 | 20000 | 918.154 | 23.322 | 39.4x |
+| dense | 300 | 45000 | 2097.455 | 59.729 | 35.1x |
+| adversarial | 25 | 82 | 0.067 | 0.003 | 19.6x |
+| adversarial | 50 | 191 | 1.180 | 0.014 | 86.1x |
+| adversarial | 100 | 392 | 17.986 | 0.069 | 260.3x |
+| adversarial | 150 | 590 | 214.420 | 0.209 | 1027.4x |
+| adversarial | 200 | 786 | 1274.558 | 0.216 | 5900.7x |
+| adversarial | 250 | 988 | 2268.104 | 0.397 | 5714.5x |
+
+wrote results\benchmarks.csv
