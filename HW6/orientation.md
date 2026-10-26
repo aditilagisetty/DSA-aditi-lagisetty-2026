@@ -1,6 +1,13 @@
-# HW6 Writeup: Deep Dive on Maximum Flow
+# HW6 Orientation to Deliverables: Maximum Flow
 
 For this project I wrote Ford-Fulkerson (using DFS) and Edmonds-Karp (using BFS) from scratch in Kotlin. I tested them against JGraphT, used them to put students on project teams, and timed them against each other.
+
+## What I did and what I found
+
+- Code. Both algorithms share one graph class (`FlowNetwork.kt`) and one loop for sending flow (`MaxFlow.kt`). The only difference is DFS or BFS for finding paths. All 36 tests pass. These include examples I worked out by hand (one is from CLRS), and checks that both algorithms get the same answer as JGraphT on 720 random graphs.
+- Explainer. It explains residual graphs, augmenting paths, the max-flow min-cut theorem, and why Edmonds-Karp is O(V·E²). The worked example goes step by step through a small graph. DFS needs 4 paths, one of them using a reverse edge to undo an earlier choice. BFS only needs 3 because it takes short paths first.
+- Application. I put 60 students on 12 teams of 5 by turning it into a max flow problem. The max flow is 56, so 56 students get a team they picked, and that's the best possible. The min cut explains the other 4: 44 students only picked 8 teams, and those teams have just 40 spots between them. So 4 of them can't be placed, even though 4 spots are still empty on teams none of them picked.
+- Benchmark. I timed both algorithms on 3 kinds of graphs with 6 sizes each, warming up the JVM first. Edmonds-Karp was faster every time, from 14 times faster up to about 5,700 times faster. It never needed more than 324 paths, far below its V·E/2 limit, and the number didn't depend on the capacities. Ford-Fulkerson needed about one path per unit of flow on the random graphs. On the adversarial graph, its path count blew up as the graph got bigger.
 
 ## Reports
 
